@@ -1,21 +1,26 @@
-from numpy import array
-from numpy.lib.type_check import imag
+import sys
+import os
 from imageHandler import ImageHandler
-import imageProcessor
 
-if __name__ == '__main__':
-    filepath = str(input("Enter filepath: "))
+if __name__ == "__main__":
+    # Get the file path from CLI args
+    filepath = sys.argv[1]
+    if len(sys.argv) != 2:
+        print("Usage: python3 main.py <image filepath>")
 
-    imgHandler = ImageHandler(filepath)
-    image = imgHandler.getGreyImage()
-    imageProcessor.encodeAs7Bit(image)
-    asciiImage = imageProcessor.encodeAsAscii(image)
+    # Get terminal dimensions
+    term_width, term_height = os.get_terminal_size()
 
-    f = open('ascii.txt', 'w')
+    # Get the image from the filepath
+    image_handler = ImageHandler(filepath)
 
-    for x in range(len(asciiImage)):
-        for y in range(len(asciiImage[0])):
-            f.write(asciiImage[x][y])
-        f.write('\n')
-    
-    f.close()
+    # Resize the image to the terminal's dimensions and get the ASCII encoding
+    asciiImage = (image_handler
+                  .resizeImage(term_width, term_height)
+                  .encodeAsAscii())
+
+    # Print to the console
+    for row in range(len(asciiImage)):
+        for col in range(len(asciiImage[0])):
+            print(asciiImage[row][col], end="")
+        print()

@@ -1,20 +1,26 @@
 import cv2, numpy
 
-class ImageHandler():
-    _greyImage : numpy.ndarray
+ASCII = ".'`^\",:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
-    def __init__(self, imgPath) -> None:
+
+class ImageHandler:
+    _greyImage: numpy.ndarray
+
+    def __init__(self, imgPath):
         self._greyImage = cv2.imread(imgPath, cv2.IMREAD_GRAYSCALE)
-        
-    def saveImage(self):
-        pass
 
     def resizeImage(self, width, height):
-        self._greyImage = cv2.resize(self._greyImage, (width, height)) 
+        self._greyImage = cv2.resize(self._greyImage, (width, height))
+        return self
 
-    def getGreyImage(self):
+    def build(self):
         return self._greyImage
 
-    def display(self):
-        cv2.imshow('image', self._greyImage)
-        cv2.waitKey(0)
+    def encodeAsAscii(self) -> list:
+        height, width = self._greyImage.shape
+
+        asciiImage = [["" for _ in range(width)] for _ in range(height)]
+        for row in range(height):
+            for col in range(width):
+                asciiImage[row][col] = ASCII[self._greyImage[row][col] % len(ASCII)]
+        return asciiImage
